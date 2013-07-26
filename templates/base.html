@@ -4,7 +4,7 @@
 </head>
 <body>
 {% if root_path %}
-<span>root:  <a href="?q={{ escape(root_path[0]) }}">{{ root_path[1] }}</a></span><br>
+<span>root:  <a href="?q={{ escape(root_path[0]) }}">{{ escape(root_path[1]) }}</a></span><br>
 {% end %}
 
 {% if dir_list %}

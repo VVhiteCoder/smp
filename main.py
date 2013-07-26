@@ -81,11 +81,14 @@ class GenerateFileList():
         if self.check_integrity(path):
             return [self.walk(path), self.get_file_list(path)]
         else:
-            return 'error'
+            return 'error', 'error'  # two string for compatibility
 
 
 class MainHandler(tornado.web.RequestHandler):
+
     def get(self):
+        # self.write(input_par[::-1])
+        # print(input_par)
         gfl = GenerateFileList()
         path = self.get_argument("q", None)
         if path:
@@ -94,15 +97,21 @@ class MainHandler(tornado.web.RequestHandler):
         else:
             root_path = None
             (dir_list, file_list) = gfl.ls(PHOTO_PATH)
-        self.render("templates/base.html",
-                    dir_list=dir_list,
-                    file_list=file_list,
-                    root_path=root_path,
-                    title="smp")
+        if dir_list == 'error':
+            self.set_status(404)
+        else:
+            self.render("base.html",
+                        dir_list=dir_list,
+                        file_list=file_list,
+                        root_path=root_path,
+                        title="smp")
 
 
 app = tornado.web.Application(
-    [(r"/", MainHandler), ]
+    [(r"/", MainHandler), ],
+    template_path=os.path.join(os.path.dirname(__file__), 'templates'),
+    static_path=os.path.join(os.path.dirname(__file__), 'static'),
+    debug=True
 )
 
 if __name__ == '__main__':
