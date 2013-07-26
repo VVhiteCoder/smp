@@ -1,0 +1,13 @@
+<html>
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+<p>dirs</p>
+    {% for dir in dir_list %}
+    <a href="?q={{ escape(dir_list[dir]) }}">{{ escape(dir) }}</a><br>
+    {% end %}
+
+<p>files</p>
+</body>
+</html>
