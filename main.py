@@ -60,10 +60,19 @@ class GenerateFileList():
         """
         check if path is not root dir of paths listed in conf file
         """
-        for sh_path in PATHS:
-            if not sh_path in path:
-                return False
-        return True
+        if PHOTO_PATH in path:
+            return True
+        return False
+
+    def get_root_path(self, path=''):
+        """
+        return root dir
+        """
+        (root_path, path_name) = os.path.split(path)
+        if self.check_integrity(root_path):
+            return root_path, path_name
+        else:
+            return False
 
     def ls(self, path=''):
         """
@@ -81,11 +90,14 @@ class MainHandler(tornado.web.RequestHandler):
         path = self.get_argument("q", None)
         if path:
             (dir_list, file_list) = gfl.ls(path)
+            root_path = gfl.get_root_path(path)
         else:
-            (dir_list, file_list) = gfl.ls(PATHS[0])
+            root_path = None
+            (dir_list, file_list) = gfl.ls(PHOTO_PATH)
         self.render("templates/base.html",
                     dir_list=dir_list,
                     file_list=file_list,
+                    root_path=root_path,
                     title="smp")
 
 

@@ -3,4 +3,4 @@
 # allowed extensions
 PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png']
 # shared folders
-PATHS = ['/home/svvitch/Pictures']
+PHOTO_PATH = '/home/svvitch/Videos'
