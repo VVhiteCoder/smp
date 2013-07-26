@@ -3,11 +3,18 @@
     <title>{{ title }}</title>
 </head>
 <body>
+{% if dir_list %}
 <p>dirs</p>
     {% for dir in dir_list %}
     <a href="?q={{ escape(dir_list[dir]) }}">{{ escape(dir) }}</a><br>
     {% end %}
+{% end %}
 
+{% if file_list %}
 <p>files</p>
+    {% for file in file_list %}
+    <a href="?q={{ escape(file_list[file]) }}">{{ escape(file) }}</a><br>
+    {% end %}
+{% end %}
 </body>
 </html>
