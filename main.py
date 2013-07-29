@@ -1,11 +1,22 @@
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
+from tornado.options import define, options
+from PIL import Image
 import os
 from conf import *
 
+define('port', default=9999, help="run on port 9999", type=int)
 
-class Thumbs():
-    pass
+
+def get_blank():
+    """
+    return blank image in case:
+    1. image doesn't exist
+    2. is a directory
+    """
+    f = open(os.path.join(APP_ROOT, 'static/img/blank.jpg'))
+    return f
 
 
 class GenerateFileList():
@@ -81,42 +92,133 @@ class GenerateFileList():
         if self.check_integrity(path):
             return [self.walk(path), self.get_file_list(path)]
         else:
-            return 'error', 'error'  # two string for compatibility
+            return [self.walk(PHOTO_PATH), self.get_file_list(PHOTO_PATH)]
+
+
+class Thumbs():
+    """
+    create and provide thumbs for request images
+    """
+    def __init__(self, path):
+        self.path = path
+        self.gfl = GenerateFileList()
+        self.root_path = os.path.split(self.path)[0]
+        self.filename = os.path.split(self.path)[1]
+
+    def create_thumb_dir(self):
+        if not os.path.isdir(os.path.join(self.root_path, THUMB_DIR)):
+            os.makedirs(os.path.join(self.root_path, THUMB_DIR))
+
+    def create_thumb(self):
+        if self.gfl.check_extension(self.path):
+            im = Image.open(self.path)
+            im_resize = im.resize(THUMB_SIZE, Image.ANTIALIAS)
+            # create dir if not exist
+            self.create_thumb_dir()
+            im_resize.save(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
+            f = open(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
+        else:
+            f = get_blank()
+        return f
+
+    def open_thumb(self):
+        try:
+            f = open(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
+        except:
+            f = self.create_thumb()
+        return f
+
+    def get_thumb(self):
+        if os.path.isfile(self.path):
+            thumb = self.open_thumb()
+        else:
+            thumb = get_blank()
+        return thumb
+
+################################# RequestHandlers ####################################
 
 
 class MainHandler(tornado.web.RequestHandler):
-
-    def get(self):
-        # self.write(input_par[::-1])
-        # print(input_par)
+    """top main url"""
+    def get(self, path=None):
         gfl = GenerateFileList()
-        path = self.get_argument("q", None)
+        # path = self.get_argument("q", None)
         if path:
-            (dir_list, file_list) = gfl.ls(path)
-            root_path = gfl.get_root_path(path)
+            p = path if path[0] == '/' else '/' + path
+            (dir_list, file_list) = gfl.ls(p)
+            root_path = gfl.get_root_path(p)
         else:
             root_path = None
             (dir_list, file_list) = gfl.ls(PHOTO_PATH)
-        if dir_list == 'error':
-            self.set_status(404)
+
+        self.render("base.html",
+                    dir_list=dir_list,
+                    file_list=file_list,
+                    root_path=root_path,
+                    title="smp")
+
+
+class ThumbsHandler(tornado.web.RequestHandler):
+    """get thumbs """
+    def __init__(self, *args, **kwargs):
+        self.gfl = GenerateFileList()
+        super(ThumbsHandler, self).__init__(*args, **kwargs)
+
+    def open_file(self, path):
+        self.thumb = Thumbs(path)
+        if self.gfl.check_integrity(path):
+            thumb = self.thumb.get_thumb()
         else:
-            self.render("base.html",
-                        dir_list=dir_list,
-                        file_list=file_list,
-                        root_path=root_path,
-                        title="smp")
+            thumb = get_blank()
+        return thumb
+
+    def get(self, path=None):
+        self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
+        self.write(self.open_file(path).read())
+
+
+class DownloadHandler(tornado.web.RequestHandler):
+    """
+    download file, asynchronously
+    """
+    def __init__(self, *args, **kwargs):
+        self.gfl = GenerateFileList()
+        super(DownloadHandler, self).__init__(*args, **kwargs)
+
+    def open_file(self, path):
+        if self.gfl.check_integrity(path):
+            f = open(path, 'r')
+        else:
+            f = get_blank()
+        return f
+
+    # @tornado.web.asynchronous
+    def get(self, path=None):
+        self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
+        self.write(self.open_file(path).read())
+        # self.finish()
 
 
 app = tornado.web.Application(
-    [(r"/", MainHandler), ],
+       [
+        (r"/thumb([^$]+)", ThumbsHandler),
+        (r"/download([^$]+)", DownloadHandler),
+        (r"/", MainHandler),
+        (r"/([^$]+)", MainHandler)
+        ],
     template_path=os.path.join(os.path.dirname(__file__), 'templates'),
     static_path=os.path.join(os.path.dirname(__file__), 'static'),
     debug=True
 )
 
 if __name__ == '__main__':
-    app.listen(9999)
+    # app.listen(9999)
+    #################
+    options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
+    #####################
     # gfl = GenerateFileList()
     # gfl.walk(PATHS[0])
     # print(gfl.photo_dirs)

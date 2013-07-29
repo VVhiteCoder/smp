@@ -1,24 +1,50 @@
 <html>
 <head>
+    <link rel="stylesheet" href="{{ static_url('bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('bootstrap/css/bootstrap-responsive.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('bootstrap/js/bootstrap.min.js') }}">
     <title>{{ title }}</title>
 </head>
 <body>
+
+{% block root %}
 {% if root_path %}
-<span>root:  <a href="?q={{ escape(root_path[0]) }}">{{ escape(root_path[1]) }}</a></span><br>
+<div class="row">
+    <div class="span9 offset1">
+        <span>root:  <a href="{{ escape(root_path[0]) }}">{{ escape(root_path[1]) }}</a></span><br>
+    </div>
+</div>
 {% end %}
+{% end %}
+
+{% block container %}
+
+{% block albums %}
 
 {% if dir_list %}
 <p>dirs</p>
     {% for dir in dir_list %}
-    <a href="?q={{ escape(dir_list[dir]) }}">{{ escape(dir) }}</a><br>
+    <a href="{{ escape(dir_list[dir]) }}">{{ escape(dir) }}</a><br>
     {% end %}
 {% end %}
+
+{% end %}
+
+
+{% block photos %}
 
 {% if file_list %}
 <p>files</p>
     {% for file in file_list %}
-    <a href="?q={{ escape(file_list[file]) }}">{{ escape(file) }}</a><br>
+    <img border="0" src="/thumb{{ escape(file_list[file]) }}" alt="{{ escape(file) }}" width="304" height="228">
     {% end %}
+{% end %}
+
+{% end %}
+
+{% end %}
+
+{% block footer %}
 {% end %}
 </body>
 </html>
