@@ -1,0 +1,84 @@
+SMP
+Share my photos
+мини програма написанная на tornado web framework с использованием PIL библиотеки
+позволяет шарить фотки задавая путь к каталогу
+автоматически создаётся веб страницу с альбомами (каталогами) и фотографиями,
+при клике на альбом - переходит в альбом где находятся фотографии и другие альбомы (папки)
+
+тех часть:
+показывает только папки которые содержат дозволенные файлы (расширения картинок задаются в конф файле)
+с помощи PIL создаются тумбсы автоматически при первом запросе
+создание тумбсов запускается в отдельный поток (для каждого)
+запрос к тумбсу разработан асинхронно, так же как и к скачиванию фотографии
+
+задачи:
+	использование siege для тестирования
+	
+testing:
+siege -t 60s -c 350 -b -i -f test.txt
+
+==========synchronous,
+===no thumbs pre-creation:
+
+
+Transactions:                  22708 hits
+Availability:                 100.00 %
+Elapsed time:                  60.01 secs
+Data transferred:             346.87 MB
+Response time:                  0.90 secs
+Transaction rate:             378.40 trans/sec
+Throughput:                     5.78 MB/sec
+Concurrency:                  341.66
+Successful transactions:       22708
+Failed transactions:               0
+Longest transaction:           31.45
+Shortest transaction:           0.27
+
+===pre-creation
+
+Transactions:                  22708 hits
+Availability:                 100.00 %
+Elapsed time:                  60.01 secs
+Data transferred:             346.87 MB
+Response time:                  0.90 secs
+Transaction rate:             378.40 trans/sec
+Throughput:                     5.78 MB/sec
+Concurrency:                  341.66
+Successful transactions:       22708
+Failed transactions:               0
+Longest transaction:           31.45
+Shortest transaction:           0.27
+
+
+
+============asynchronous:
+===no thumbs pre-creation:
+
+Transactions:                  21512 hits
+Availability:                 100.00 %
+Elapsed time:                  59.44 secs
+Data transferred:             332.83 MB
+Response time:                  0.91 secs
+Transaction rate:             361.91 trans/sec
+Throughput:                     5.60 MB/sec
+Concurrency:                  329.41
+Successful transactions:       21512
+Failed transactions:               0
+Longest transaction:           31.47
+Shortest transaction:           0.26
+
+===pre-creation
+
+Transactions:                  24186 hits
+Availability:                 100.00 %
+Elapsed time:                  60.14 secs
+Data transferred:             374.56 MB
+Response time:                  0.79 secs
+Transaction rate:             402.16 trans/sec
+Throughput:                     6.23 MB/sec
+Concurrency:                  317.50
+Successful transactions:       24186
+Failed transactions:               0
+Longest transaction:           31.46
+Shortest transaction:           0.00
+

@@ -1,5 +1,4 @@
 import tornado.ioloop
-import tornado.gen
 import tornado.web
 import tornado.httpserver
 from tornado.options import define, options
@@ -123,11 +122,14 @@ class Thumbs():
         return f
 
     def open_thumb(self):
-        try:
-            f = open(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
-        except:
-            f = False
-        return f
+        return open(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
+
+    # def open_thumb(self):
+    #     try:
+    #         f = open(os.path.join(self.root_path, os.path.join(THUMB_DIR, self.filename)))
+    #     except:
+    #         f = self.create_thumb()
+    #     return f
 
     def get_thumb(self):
         if os.path.isfile(self.path):
@@ -160,39 +162,52 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 class ThumbsHandler(tornado.web.RequestHandler):
-    """get thumbs asynchronous"""
+    """get thumbs """
     def __init__(self, *args, **kwargs):
         self.gfl = GenerateFileList()
-        self.thumb_image = None
         super(ThumbsHandler, self).__init__(*args, **kwargs)
 
-    def get_thumb(self):
-        self.thumb_image = self.thumb_obj.get_thumb()
+    # def open_file(self, path):
+    #     self.thumb = Thumbs(path)
+    #     if self.gfl.check_integrity(path) and os.path.isfile(self.path):
+    #         thumb = self.thumb.get_thumb()
+    #     else:
+    #         thumb = get_blank()
+    #     return thumb
 
-    def create_thumb(self):
-        self.thumb_image = self.thumb_obj.create_thumb()
-
-    @tornado.web.asynchronous
-    @tornado.gen.engine
     def get(self, path=None):
         self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
-        self.thumb_obj = Thumbs(path)
 
+        self.thumb = Thumbs(path)
         if self.gfl.check_integrity(path) and os.path.isfile(path):
-            if self.thumb_obj.open_thumb():
-                self.get_thumb()
-                self.write(self.thumb_image.read())
-                self.finish()
-            else:
-                tornado.gen.Task(self.create_thumb())
-                tornado.gen.Task(self.get_thumb())
-                self.write(self.thumb_image.read())
-                self.finish()
+            try:
+                thumb = self.thumb.get_thumb()
+            except:
+                thumb = self.thumb.create_thumb()
         else:
-            self.thumb_image = get_blank()
-            self.write(self.thumb_image.read())
-            self.finish()
+            thumb = get_blank()
 
+        self.write(thumb.read())
+
+
+#
+# class ThumbsHandler(tornado.web.RequestHandler):
+#     """get thumbs """
+#     def __init__(self, *args, **kwargs):
+#         self.gfl = GenerateFileList()
+#         super(ThumbsHandler, self).__init__(*args, **kwargs)
+#
+#     def open_file(self, path):
+#         self.thumb = Thumbs(path)
+#         if self.gfl.check_integrity(path):
+#             thumb = self.thumb.get_thumb()
+#         else:
+#             thumb = get_blank()
+#         return thumb
+#
+#     def get(self, path=None):
+#         self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
+#         self.write(self.open_file(path).read())
 
 class DownloadHandler(tornado.web.RequestHandler):
     """
@@ -209,11 +224,11 @@ class DownloadHandler(tornado.web.RequestHandler):
             f = get_blank()
         return f
 
-    @tornado.web.asynchronous
+    # @tornado.web.asynchronous
     def get(self, path=None):
         self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
         self.write(self.open_file(path).read())
-        self.finish()
+        # self.finish()
 
 
 app = tornado.web.Application(

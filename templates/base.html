@@ -36,7 +36,9 @@
 {% if file_list %}
 <p>files</p>
     {% for file in file_list %}
-    <img border="0" src="/thumb{{ escape(file_list[file]) }}" alt="{{ escape(file) }}" width="304" height="228">
+        <a href="/download{{ escape(file_list[file]) }}">
+            <img border="0" src="/thumb{{ escape(file_list[file]) }}" alt="{{ escape(file) }}" width="304" height="228">
+        </a>
     {% end %}
 {% end %}
 
