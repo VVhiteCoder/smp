@@ -233,7 +233,7 @@ class DownloadHandler(tornado.web.RequestHandler):
 
 app = tornado.web.Application(
        [
-        (r"/thumb([^$]+)", ThumbsHandler),
+        (r"/smp_thumb([^$]+)", ThumbsHandler),
         (r"/download([^$]+)", DownloadHandler),
         (r"/", MainHandler),
         (r"/([^$]+)", MainHandler)

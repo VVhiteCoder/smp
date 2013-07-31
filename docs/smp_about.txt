@@ -1,19 +1,32 @@
 SMP
 Share my photos
-мини програма написанная на tornado web framework с использованием PIL библиотеки
-позволяет шарить фотки задавая путь к каталогу
-автоматически создаётся веб страницу с альбомами (каталогами) и фотографиями,
+мини программа написанная на tornado web framework с использованием PIL библиотеки
+позволяет share-ити фотки задавая путь к каталогу
+автоматически создаётся веб страница с альбомами (каталогами) и фотографиями,
 при клике на альбом - переходит в альбом где находятся фотографии и другие альбомы (папки)
+не отходит от идеи "one click to share"
 
 тех часть:
+не использует БД
 показывает только папки которые содержат дозволенные файлы (расширения картинок задаются в конф файле)
 с помощи PIL создаются тумбсы автоматически при первом запросе
-создание тумбсов запускается в отдельный поток (для каждого)
 запрос к тумбсу разработан асинхронно, так же как и к скачиванию фотографии
 
-задачи:
-	использование siege для тестирования
-	
+
+
+цель:
+    выучить tornado framework
+    просмотреть в общем разработку на flask - tornado - cyclone - google app engine, а так же разницу и схожесть
+    использовать siege для тестирования быстродействия и разницы между синхронных и асинхронных запросов
+
+в последствии:
+    знать и разрабатывать на tornado
+    в общем понимать структуру GAE и flask
+    понимать и разрабатывать blocking - non-blocking network I/O,  synchronous - asynchronous обработки запросов
+	с помощью framework-а или без
+
+
+
 testing:
 siege -t 60s -c 350 -b -i -f test.txt
 
@@ -21,64 +34,67 @@ siege -t 60s -c 350 -b -i -f test.txt
 ===no thumbs pre-creation:
 
 
-Transactions:                  22708 hits
+Transactions:                  23285 hits
 Availability:                 100.00 %
-Elapsed time:                  60.01 secs
-Data transferred:             346.87 MB
-Response time:                  0.90 secs
-Transaction rate:             378.40 trans/sec
-Throughput:                     5.78 MB/sec
-Concurrency:                  341.66
-Successful transactions:       22708
+Elapsed time:                  59.20 secs
+Data transferred:             357.71 MB
+Response time:                  0.81 secs
+Transaction rate:             393.33 trans/sec
+Throughput:                     6.04 MB/sec
+Concurrency:                  318.53
+Successful transactions:       23285
 Failed transactions:               0
-Longest transaction:           31.45
-Shortest transaction:           0.27
+Longest transaction:           31.41
+Shortest transaction:           0.24
+
 
 ===pre-creation
 
-Transactions:                  22708 hits
+Transactions:                  26198 hits
 Availability:                 100.00 %
-Elapsed time:                  60.01 secs
-Data transferred:             346.87 MB
-Response time:                  0.90 secs
-Transaction rate:             378.40 trans/sec
-Throughput:                     5.78 MB/sec
-Concurrency:                  341.66
-Successful transactions:       22708
+Elapsed time:                  60.14 secs
+Data transferred:             402.13 MB
+Response time:                  0.77 secs
+Transaction rate:             435.62 trans/sec
+Throughput:                     6.69 MB/sec
+Concurrency:                  335.43
+Successful transactions:       26198
 Failed transactions:               0
-Longest transaction:           31.45
-Shortest transaction:           0.27
+Longest transaction:           15.46
+Shortest transaction:           0.00
 
 
 
 ============asynchronous:
 ===no thumbs pre-creation:
 
-Transactions:                  21512 hits
+Transactions:                  22517 hits
 Availability:                 100.00 %
-Elapsed time:                  59.44 secs
-Data transferred:             332.83 MB
-Response time:                  0.91 secs
-Transaction rate:             361.91 trans/sec
-Throughput:                     5.60 MB/sec
-Concurrency:                  329.41
-Successful transactions:       21512
+Elapsed time:                  59.79 secs
+Data transferred:             345.49 MB
+Response time:                  0.89 secs
+Transaction rate:             376.60 trans/sec
+Throughput:                     5.78 MB/sec
+Concurrency:                  334.83
+Successful transactions:       22517
 Failed transactions:               0
-Longest transaction:           31.47
-Shortest transaction:           0.26
+Longest transaction:           32.04
+Shortest transaction:           0.19
+
 
 ===pre-creation
 
-Transactions:                  24186 hits
+Transactions:                  25556 hits
 Availability:                 100.00 %
-Elapsed time:                  60.14 secs
-Data transferred:             374.56 MB
-Response time:                  0.79 secs
-Transaction rate:             402.16 trans/sec
-Throughput:                     6.23 MB/sec
-Concurrency:                  317.50
-Successful transactions:       24186
+Elapsed time:                  59.13 secs
+Data transferred:             394.42 MB
+Response time:                  0.77 secs
+Transaction rate:             432.20 trans/sec
+Throughput:                     6.67 MB/sec
+Concurrency:                  333.97
+Successful transactions:       25556
 Failed transactions:               0
-Longest transaction:           31.46
-Shortest transaction:           0.00
+Longest transaction:           31.45
+Shortest transaction:           0.08
+
 
