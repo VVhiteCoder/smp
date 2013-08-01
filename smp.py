@@ -9,17 +9,25 @@ from file_handler import get_blank, GenerateFileList, Thumbs, FileInfoDictAssemb
 
 define('port', default=9999, help="run on port 9999", type=int)
 
-################################# RequestHandlers ####################################
-# class DirCountHandler(tornado.web.RequestHandler):
-#     """count contained dirs and files of a path"""
-#     def __init__(self, *args, **kwargs):
-#         self.gfl = GenerateFileList()
-#         super(DirCountHandler, self).__init__(*args, **kwargs)
-#
-#     def get(self, path=None):
-#         p = path if path[0] == '/' else '/' + path
-#         (dir_list, file_list) = self.gfl.ls(p)
-#         self.write(simplejson.dumps({'dir_count': len(dir_list), 'file_count': len(file_list)}))
+
+def loop_cycling(length, skip):
+    """
+    length - nr of all items
+    skip - nr of item in row
+    use:cyc = loop_cycling(10, 3)
+        cyc.next()
+    """
+    count = 1
+    while count <= length:
+        if (count - 1) % skip == 0 and count == length:
+            yield 'single'
+        elif count == 1 or (count - 1) % skip == 0:
+            yield 'first'
+        elif count == length or count % skip == 0:
+            yield 'last'
+        else:
+            yield 'next'
+        count += 1
 
 
 class MainHandler(tornado.web.RequestHandler):
