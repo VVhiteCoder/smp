@@ -49,6 +49,7 @@ class MainHandler(tornado.web.RequestHandler):
                     dir_list=dir_list,
                     file_list=file_list,
                     root_path=root_path,
+                    loop_cycling=loop_cycling,
                     title="smp")
 
 
