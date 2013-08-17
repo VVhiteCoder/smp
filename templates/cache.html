@@ -1,0 +1,20 @@
+<div class="row-fluid">
+    <blockquote class="pull-right">
+        <h4 class="text-warning">photos</h4>
+    </blockquote>
+    {% for file in file_list %}
+    <div class="span2">
+        <!--<pre>-->
+
+        <a href="/smp_download{{ escape(file_list[file]['path']) }}">
+            <img class="img-polaroid" src="/smp_thumb{{ escape(file_list[file]['path']) }}"/>
+            <span>{{ file }}</span>
+        </a>
+
+
+        <!--</pre>-->
+    </div>
+    {% end %}
+
+
+</div>

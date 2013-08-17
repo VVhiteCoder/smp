@@ -1,179 +1,143 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <title>VV & Ion Gallery</title>
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="VV & Ion Gallery" />
-    <meta name="keywords" content="VV & Ion Gallery" />
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <link rel="stylesheet" href="{{ static_url('css/vi_css_style.css') }}" type="text/css">
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
+    <title>Share My Photos</title>
+    <link rel="stylesheet" href="{{ static_url('bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('bootstrap/css/bootstrap-responsive.min.css') }}">
+    <script type="text/javascript" src="{{ static_url('bootstrap/js/bootstrap.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ static_url('js/jquery-1.10.1.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ static_url('fancyBox/jquery.fancybox.css') }}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{ static_url('fancyBox/jquery.fancybox.pack.js') }}"></script>
+
+    <style>
+        body
+        {
+            background-image:url("{{ static_url('img/ticks.png') }}");
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".fancybox-button").fancybox({
+                prevEffect		: 'none',
+                nextEffect		: 'none',
+                closeBtn		: false,
+                helpers		: {
+                    title	: { type : 'inside' },
+                    buttons	: {}
+                }
+            });
+        });
+    </script>
+
 </head>
 <body>
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <!--/////////////////////////////////START HEADER///////////////////////////////////////-->
-    <div id="vi_header_wrap">
-        <div id="vi_header">
-            ssss
+
+
+<div class="container">
+
+
+    {% block head %}
+    <div class="row-fluid">
+        <h1 class="text-info">Share My Photos <small>0.1</small></h1>
+    </div>
+    {% end %}
+
+
+
+    {% block root %}
+    {% if root_path %}
+    <div class="row-fluid">
+        <div class="span9 offset1">
+            <blockquote>
+                <h4><span>Current album:  <a class="btn btn-large btn-primary" href="{{ escape(root_path[0]) }}">{{ escape(root_path[1]) }}</a></span></h4>
+            </blockquote>
         </div>
     </div>
-    <!--/////////////////////////////////END HEADER/////////////////////////////////////////-->
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <!--/////////////////////////////////START CONTENT//////////////////////////////////////-->
-    <div id="vi_content_wrap">
-        <div id="vi_content">
-            <!--////////////////////////////////GALLERY//////////////////////////////////////-->
-            <div>
-            <!--////////////////////////////////////////////////////////////////////////////////////-->
-            <!--///////////////////////////////////////FILTERS//////////////////////////////////////-->
-            <!--////////////////////////////////////////////////////////////////////////////////////-->
-                <div class="vi_gallery_stats">
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-                    <div class="vi_gallery_stats_label">My Filters</div>
-                    <a href="#"><div class="vi_gallery_stats_filter">Date</div></a>
-                    <a href="#"><div class="vi_gallery_stats_filter">Name</div></a>
-                    <a href="#"><div class="vi_gallery_stats_filter">Recent</div></a>
-                    <a href="#"><div class="vi_gallery_stats_filter">Last Updated</div></a>
-                    <a href="#"><div class="vi_gallery_stats_filter">Favorites</div></a>
-                    <div class="vi_gallery_stats_count">
-                        <div class="vi_gallery_stats_count_label_albums_cord">
-                            <div class="vi_gallery_stats_count_label">2,555</div>
-                            <div class="vi_gallery_stats_count_sub_label">Albums</div>
-                        </div>
-                        <div class="vi_gallery_stats_count_label_photos_cord">
-                            <div class="vi_gallery_stats_count_label">10,000,000</div>
-                            <div class="vi_gallery_stats_count_sub_label">Photos</div>
-                        </div>
-                    </div>
-                    <div class="vi_clear"></div>
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-                </div>
-                <!--////////////////////////////////NAVIGATION BAR//////////////////////////////////////-->
-                <div class="vi_gallery_stats_navi_bar">
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-                    <div class="vi_gallery_stats_navi_bar_cord">
-                        <div class="vi_gallery_stats_navi_bar_icon"></div>
-                        <div class="vi_gallery_stats_navi_bar_icon_text">
-                            <div class="vi_gallery_stats_navi_bar_label">Location</div>
-                            <a href="#">file:///C:/My Computer/Users/Ion Luchian/Dropbox/My Albums/</a>
-                        </div>
-                    </div>
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-                    <div class="vi_gallery_stats_share_cord">
-                        <div class="vi_gallery_stats_share_icon"></div>
-                        <div class="vi_gallery_stats_share_icon_text">
-                            <div class="vi_gallery_stats_navi_bar_label">My share link</div>
-                            <a href="#">https://www.10.10.10:8080/</a>
-                        </div>
-                    </div>
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-                    <div class="vi_gallery_stats_gallery_cord">
-                        <div class="vi_gallery_stats_gallery_icon"></div>
-                        <div class="vi_gallery_stats_share_icon_text">
-                            <div class="vi_gallery_stats_gallery__label">Ion Luchian's Gallery</div>
-                        </div>
-                    </div>
-                    <!--////////////////////////////////PAGES////////////////////////////////////////////-->
-                    <div class="vi_gallery_stats_navi_bar_next"></div>
-                    <div class="vi_gallery_stats_navi_bar_prev"></div>
-                    <div class="vi_clear"></div>
-                    <!--////////////////////////////////////////////////////////////////////////////////////-->
-
-
-                </div>
-                <!--////////////////////////////////////////////////////////////////////////////////////-->
-                <!--/////////////////////////////////////ALBUMS/////////////////////////////////////////-->
-                <!--////////////////////////////////////////////////////////////////////////////////////-->
-{% block albums %}
-    {% if dir_list %}
-                <table class="vi_gallery">
-        {% set count = 0 %}
-        {% for dir in dir_list %}
-            {% set count += 1 %}
-            {% if count % 4 == 0 or count == 1 %}
-                    <tr>
-            {% end %}
-                        <!--/////////////////////////////////////////////////////////////////////////-->
-                        <td valign="top">
-                            <div class="vi_gallery_albums">
-                                <div class="vi_gallery_albums_add_cover"></div>
-                                <a href="{{ escape(dir_list[dir]['path']) }}">
-                                    <img src="{{ static_url('img/vi_gallery_album_cover.png') }}"/>
-                                    <span>{{ dir }}</span>{{ count }}
-                                </a>
-                                <div class="vi_gallery_albums_photos_count">
-                                    <div class="vi_gallery_albums_photos_cord">{{ dir_list[dir]['file_count'] }}</div>
-                                    <div class="vi_gallery_albums_sub_cord">{{ dir_list[dir]['dir_count'] }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <!--/////////////////////////////////////////////////////////////////////////-->
-            {% if count % 4 == 0 or count == len(dir_list) %}
-                    </tr>
-            {% end %}
-        {% end %}
-                </table>
     {% end %}
+    {% end %}
+
+
+    {% block container %}
+
+{% block albums %}
+
+{% if dir_list %}
+
+
+<div class="row-fluid well" style="background-color: lightgoldenrodyellow;">
+    <blockquote class="pull-right">
+        <h4 class="text-warning">albums</h4>
+    </blockquote>
+
+        {% for dir in dir_list %}
+        <div class="span2">
+
+<pre class="well-small">
+            <a href="{{ escape(dir_list[dir]['path']) }}">
+                <img src="{{ static_url('img/512.png') }}"/>
+                <span class="label">{{ dir }}</span>
+                <span class="label label-info">albums:</span><span class="badge badge-info">{{ dir_list[dir]['dir_count'] }}</span>
+                <span class="label label-info">photos:</span><span class="badge badge-info">{{ dir_list[dir]['file_count'] }}</span>
+            </a>
+
+</pre>
+
+        </div>
+        {% end %}
+
+</div>
+
+
 {% end %}
 
-
+{% end %}
 
 
 {% block photos %}
 
     {% if file_list %}
-        <table class="vi_gallery">
-            {% set count = 0 %}
-            {% for file in file_list %}
-                {% set count += 1 %}
-                {% if count % 4 == 0 or count == 1 %}
-                    <tr>
-                {% end %}
-                        <!--/////////////////////////////////////////////////////////////////////////-->
-                        <td valign="top">
-                            <div class="vi_gallery_albums">
-                                <div class="vi_gallery_albums_add_cover"></div>
-                                <a href="/smp_download{{ escape(file_list[file]['path']) }}">
-                                    <img src="/smp_thumb{{ escape(file_list[file]['path']) }}"/>
-                                    <span>{{ file }}</span>
-                                </a>
-                            </div>
-                        </td>
-                        <!--/////////////////////////////////////////////////////////////////////////-->
-                {% if count % 4 == 0 or count == len(file_list) %}
-                    </tr>
-                {% end %}
-            {% end %}
-        </table>
+
+
+    <div class="row-fluid well" style="background-color: lemonchiffon;">
+        <blockquote class="pull-right">
+            <h4 class="text-warning">photos</h4>
+        </blockquote>
+        {% for file in file_list %}
+        <div class="span2" style="padding-bottom:25px">
+            <!--<pre>-->
+            <div class="img-polaroid">
+            <a class="fancybox-button" rel="fancybox-button" href="/smp_download{{ escape(file_list[file]['path']) }}"
+               title="{{ file }}">
+                <img  src="/smp_thumb{{ escape(file_list[file]['path']) }}"/>
+                <span class="label">{{ file }}</span>
+            </a>
+            </div>
+
+            <!--</pre>-->
+        </div>
+        {% end %}
+
+
+    </div>
+
     {% end %}
 
 {% end %}
-                <!--////////////////////////////////////////////////////////////////////////////////////-->
-                <!--////////////////////////////////////////////////////////////////////////////////////-->
-                <!--////////////////////////////////////////////////////////////////////////////////////-->
-            </div>
 
 
+    {% end %}
 
+    {% block footer %}
+    <blockquote class="pull-right">
+    <!--<div class="span9 offset6">-->
+        <span>VVhiteCoder</span>
+    <!--</div>-->
+        </blockquote>
+    {% end %}
 
-            <!--/////////////////////////////////////////////////////////////////////////////-->
-        </div>
-    </div>
-    <!--/////////////////////////////////END CONTENT////////////////////////////////////////-->
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
+</div>
 
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
-    <!--/////////////////////////////////START FOOTER///////////////////////////////////////-->
-    <div id="vi_footer_wrap">
-        <div id="vi_footer">
-            ssss
-        </div>
-    </div>
-    <!--/////////////////////////////////END FOOTER/////////////////////////////////////////-->
-    <!--////////////////////////////////////////////////////////////////////////////////////-->
 </body>
 </html>

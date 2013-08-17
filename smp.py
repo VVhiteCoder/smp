@@ -69,22 +69,23 @@ class ThumbsHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
     def get(self, path=None):
-        self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
         self.thumb_obj = Thumbs(path)
-
         if self.gfl.check_integrity(path) and os.path.isfile(path):
             if self.thumb_obj.open_thumb():
                 self.get_thumb()
                 self.write(self.thumb_image.read())
+                self.set_header('Content-Type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
                 self.finish()
             else:
                 tornado.gen.Task(self.create_thumb())
                 tornado.gen.Task(self.get_thumb())
                 self.write(self.thumb_image.read())
+                self.set_header('Content-Type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
                 self.finish()
         else:
             self.thumb_image = get_blank()
             self.write(self.thumb_image.read())
+            self.set_header('Content-Type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
             self.finish()
 
 
@@ -105,8 +106,8 @@ class DownloadHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def get(self, path=None):
-        self.set_header('Content-type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
         self.write(self.open_file(path).read())
+        self.set_header('Content-Type', 'image/' + os.path.splitext(path)[1].replace('.', ''))
         self.finish()
 
 

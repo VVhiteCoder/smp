@@ -41,11 +41,12 @@ class GenerateFileList(object):
     def get_file_list(self, path=''):
         """
         return dict of permitted files of a dir - 'path'
+        { 'file_name(no ext)': 'file/path', }
         """
         for f in os.listdir(path):
             (name, ext) = os.path.splitext(f)
             if os.path.isfile(os.path.join(path, f)) and self.check_extension(f):
-                self.file_list[f] = os.path.join(path, f)
+                self.file_list[name] = os.path.join(path, f)
         if len(self.file_list):
             return self.file_list
         else:
@@ -54,6 +55,7 @@ class GenerateFileList(object):
     def walk(self, path=''):
         """
         return dict of dirs from 'path' that contain permitted files
+        { 'dir_name': 'dir_path', }
         """
         for ff in os.listdir(path):
             if os.path.isdir(os.path.join(path, ff)) and not ff[0] == '.':
