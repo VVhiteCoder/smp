@@ -8,3 +8,7 @@ Share My Photos
 3. port 9999
 4. page with alboms - maps, photos - thumbs
 
+:: requirements
+tornado
+pillow
+simplejson
