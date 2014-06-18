@@ -126,7 +126,7 @@ app = tornado.web.Application(
 if __name__ == '__main__':
     # app.listen(9999)
     #################
-    options.parse_command_line()
+    # options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
