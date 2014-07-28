@@ -10,4 +10,4 @@ THUMB_SIZE = (160, 107)
 # allowed extensions
 PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png']
 # shared folders
-PHOTO_PATH = '/home/svvitch/www_old_server/ftp/photos/smp_share'
+PHOTO_PATH = '/home/svvitch/old_server/ftp/photos/smp_share'
